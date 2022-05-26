@@ -14,13 +14,13 @@ contract Proxy is Storage{
         currentAddress = _newAddress;
     }
     
-    //REDIRECT to currentAddress
+    //Redirect to currentAddress
     fallback() external payable{
         address implementation = currentAddress;
         require(implementation != address(0), "Functional address invalid");
         bytes memory data = msg.data;
 
-        //DELEGATE EVERY FUNCTION CALL
+        //Delegate every functional call
         assembly {
             let result := delegatecall(gas(), implementation, add(data, 0x20), mload(data), 0, 0)
             let size := returndatasize()
