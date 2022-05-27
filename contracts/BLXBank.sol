@@ -27,7 +27,7 @@ contract BLXBank is Storage{
         _; 
     }
 
-    modifier SufficientFunds(uint256 _amount){
+    modifier SufficientFunds(uint _amount){
         require(addressToBankAccount[msg.sender].availableBalance >= _amount); 
         _;
     }
@@ -71,7 +71,7 @@ contract BLXBank is Storage{
     return addressToBankAccount[msg.sender];
   }
 
-  function depositTokens(bytes32 _symbol, uint256 _amount) external whenNotPaused ActiveAccount{
+  function depositTokens(bytes32 _symbol, uint _amount) external whenNotPaused ActiveAccount{
     ERC20(whitelistedTokens[_symbol]).transferFrom(msg.sender, address(this), _amount);
     addressToBankAccount[msg.sender].availableBalance += _amount;
     addressToBankAccount[msg.sender].transactionsCount ++;
@@ -80,24 +80,26 @@ contract BLXBank is Storage{
     emit TokensDeposit(msg.sender, _symbol, _amount);
   }
 
-  function withdrawTokens(bytes32 _symbol, uint256 _amount) external ActiveAccount SufficientFunds(_amount){
-    addressToBankAccount[msg.sender].availableBalance -= _amount;
-    addressToBankAccount[msg.sender].transactionsCount ++;
+  function withdrawTokens(bytes32 _symbol, uint _amount) external ActiveAccount SufficientFunds(_amount){
+    fundsOut(_amount);
     globalTokenBalance[_symbol] -= _amount; 
-    addressToBankAccount[msg.sender].totalBalance -= _amount;
     ERC20(whitelistedTokens[_symbol]).transfer(msg.sender, _amount);
     emit TokensWithdraw(msg.sender, _symbol, _amount);
   }
 
   function transferToAnotherAccount(address _recipient, bytes32 _symbol, uint _amount) external ActiveAccount SufficientFunds(_amount){
     require(addressToBankAccount[_recipient].isActive, "Recipient is not active");
-    addressToBankAccount[msg.sender].availableBalance -= _amount;
-    addressToBankAccount[msg.sender].totalBalance -= _amount;
-    addressToBankAccount[msg.sender].transactionsCount ++;    
+    fundsOut(_amount);  
     addressToBankAccount[_recipient].availableBalance += _amount;
     addressToBankAccount[_recipient].totalBalance += _amount;    
     addressToBankAccount[_recipient].transactionsCount ++; 
     emit TokensTransfer(msg.sender, _recipient, _symbol, _amount);   
+  }
+  
+  function fundsOut(uint _amount) private {
+    addressToBankAccount[msg.sender].availableBalance -= _amount;
+    addressToBankAccount[msg.sender].totalBalance -= _amount;
+    addressToBankAccount[msg.sender].transactionsCount ++;
   }
 
   function getGlobalBalanceOfTokens(bytes32 _symbol) external view returns(uint){
