@@ -29,7 +29,7 @@ The tools and libraries listed below are already set-up for you.
 - [x] Tests have been written
 - [x] Quality controls are passed
 
-### #1 - BLX Token [easy]
+### #1 - BLX Token
 
 BLXToken.sol is ERC20 token contract with `BLX` symbol, `Bloxify Token` name, and `18` decimals. <br />
 Token is transferable and mintable. <br />
@@ -52,7 +52,7 @@ Token is transferable and mintable. <br />
    of tokens from the owner to any other address
     - method: `transferFrom(address, address, uint256)`
 
-### #2 - BLX Bank [moderate]
+### #2 - BLX Bank
 
 BLXBank.sol is a Bank contract where users could create their accounts and can store `BLX` token <br/>
 The bank store information about the number of user accounts and global BLX balance. <br/>
@@ -73,7 +73,7 @@ The bank have the owner account that is able to pause and unpause deposits
 10. Owner is able to pause and unpause deposits to the bank
 11. User is unable to deposit tokens when deposits are paused
 
-### #3 - BLX Locker [moderate+]
+### #3 - BLX Locker
 
 BLXLocker is Extended/upgraded Bank contract and allow users to lock funds for other users.<br/>
 Locked funds is possible to unlock at a specific date.<br/>
